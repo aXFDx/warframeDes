@@ -50,26 +50,48 @@ def readTimeJSON():
         if dayOrNight == "白天":
             interval = 3000
             dayOrNight = "夜晚"
-            intervalDate = datetime.datetime.fromtimestamp(interval)
+            # intervalDate = datetime.datetime.fromtimestamp(interval)
+            # m, s = divmod(interval, 60)
+            # h, m = divmod(m, 60)
+            # intervalDate = str(h)+":"+str(m)+":"+str(s)
+            # # print(intervalDate)
+            showHMS()
         else:
             interval = 6000
             dayOrNight = "白天"
-            intervalDate = datetime.datetime.fromtimestamp(interval)
+            # intervalDate = datetime.datetime.fromtimestamp(interval)
+            # m, s = divmod(interval, 60)
+            # h, m = divmod(m, 60)
+            # intervalDate = str(h)+":"+str(m)+":"+str(s)
+            # print(intervalDate)
+            showHMS()
     else:
         interval = interval-1
-        intervalDate = datetime.datetime.fromtimestamp(interval)
+        # intervalDate = datetime.datetime.fromtimestamp(interval)
+        # print(interval)
+        # m, s = divmod(interval, 60)
+        # h, m = divmod(m, 60)
+        # intervalDate = str(h)+":"+str(m)+":"+str(s)
+        # print(h, m, s)
+        # print(intervalDate)
+        showHMS()
     # intervalDate = datetime.datetime.fromtimestamp(interval)
 
 #刷新界面上时间显示
 def refreshTime():
     global timeM
     global intervalDate
+    global dayOrNight
     readTimeJSON()
-    timeM["text"] = intervalDate.strftime("%H:%M:%S")+dayOrNight
+    # timeM["text"] = intervalDate.strftime("%H:%M:%S")+dayOrNight
+    # timeM["text"] = str(intervalDate)+dayOrNight
+    timeM["text"] = intervalDate+dayOrNight
     win.after(1000, refreshTime)
 
 #解析JSON，初始化数据
 def initJSON():
+    global interval
+    global dayOrNight
     text = getURL.getRestMsg()
     interval = int(text['cetus']['cetusTime']) - int(text['time'])
     print("时间差值为")
@@ -78,3 +100,11 @@ def initJSON():
         dayOrNight = "白天"
     else:
         dayOrNight = "夜晚"
+
+
+def showHMS():
+    global interval
+    global intervalDate
+    m, s = divmod(interval, 60)
+    h, m = divmod(m, 60)
+    intervalDate = str(h)+":"+str(m)+":"+str(s)
