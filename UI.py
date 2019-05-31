@@ -22,6 +22,8 @@ def showUI():
     win.title("迷你奥迪斯")
     win.geometry("300x400")
     win.resizable(width=False, height=True)
+    #初始化信息
+    initJSON()
     #设置平原时间界面
     global timeM
     timeT = Label(win, text="平原时间", font=("Arial", 12), width=10, height=2)
@@ -36,8 +38,8 @@ def showUI():
     warnM = Message(win, text=warnmsg)
     warnM.config(font=("Arial", 12))
     warnM.pack()
-    #初始化信息
-    initJSON()
+    # #初始化信息
+    # initJSON()
     #刷新时间
     refreshTime()
     win.mainloop()
@@ -56,7 +58,7 @@ def readTimeJSON():
             # h, m = divmod(m, 60)
             # intervalDate = str(h)+":"+str(m)+":"+str(s)
             # # print(intervalDate)
-            showHMS()
+            intervalDate = showHMS(interval)
         else:
             interval = 6000
             dayOrNight = "白天"
@@ -65,7 +67,7 @@ def readTimeJSON():
             # h, m = divmod(m, 60)
             # intervalDate = str(h)+":"+str(m)+":"+str(s)
             # print(intervalDate)
-            showHMS()
+            intervalDate = showHMS(interval)
     else:
         interval = interval-1
         # intervalDate = datetime.datetime.fromtimestamp(interval)
@@ -75,7 +77,7 @@ def readTimeJSON():
         # intervalDate = str(h)+":"+str(m)+":"+str(s)
         # print(h, m, s)
         # print(intervalDate)
-        showHMS()
+        intervalDate = showHMS(interval)
     # intervalDate = datetime.datetime.fromtimestamp(interval)
 
 #刷新界面上时间显示
@@ -107,12 +109,20 @@ def initJSON():
         dayOrNight = "夜晚"
     readWarnJSON()
 
-def showHMS():
-    global interval
-    global intervalDate
-    m, s = divmod(interval, 60)
+# def showHMS():
+#     global interval
+#     global intervalDate
+#     m, s = divmod(interval, 60)
+#     h, m = divmod(m, 60)
+#     intervalDate = str(h)+":"+str(m)+":"+str(s)
+
+
+def showHMS(second):
+    m, s = divmod(second, 60)
     h, m = divmod(m, 60)
-    intervalDate = str(h)+":"+str(m)+":"+str(s)
+    hms = str(h)+":"+str(m)+":"+str(s)
+    return hms
+
 
 #处理时间数据
 def readWarnJSON():
@@ -126,4 +136,5 @@ def readWarnJSON():
         else :
             warnmsg = warnmsg + "只有钱" + "   " + str(warnstr['activation']) + "\n"
             warnstr['activation'] = warnstr['activation'] - 1000
+
 
