@@ -8,6 +8,6 @@ def getRestMsg():
     #response = requests.get(url)
     #data = response.json()['alerts']
     #print(data)
-    data = '{"time":1559199782,"cetus":{"oid":"5cef60f99aa9ed1999db8378Ostrons","activation":1559191801,"expiry":1559200742,"cetusTime":1559269800,"day":false}}'
+    data = '{"time":1559271357,"cetus":{"oid":"5cf079fdcddc41bd996aec36Ostrons","activation":1559263741,"expiry":1559272733,"cetusTime":1559272733,"day":false}}'
     text = json.loads(data)
     return text
