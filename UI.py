@@ -9,12 +9,21 @@ interval = 0
 intervalDate = ""
 dayOrNight = ""
 global timeM, warnM
+
+
 def showUI():
+    global interval, dayOrNight
     data = getURL.getRestMsg()
     print("展示UI")
     win.title("迷你奥迪斯")
     win.geometry("250x600")
     win.resizable(width=False, height=True)
+    text = getURL.getRestMsg()
+    interval = int(text['cetus']['cetusTime']) - int(text['time'])
+    if text['cetus']['day'] == "True":
+        dayOrNight = "白天"
+    else:
+        dayOrNight = "黑夜"
     pyTime()
     warn()
     win.after(1000,refreshTime())
@@ -45,12 +54,12 @@ def readTimeJSON():
     global interval
     global intervalDate
     global dayOrNight
-    text = getURL.getRestMsg()
-    interval = int(text['cetus']['cetusTime']) - int(text['time'])
-    if text['cetus']['day'] == "True":
-        dayOrNight = "白天"
-    else:
-        dayOrNight = "黑夜"
+    # text = getURL.getRestMsg()
+    # interval = int(text['cetus']['cetusTime']) - int(text['time'])
+    # if text['cetus']['day'] == "True":
+    #     dayOrNight = "白天"
+    # else:
+    #     dayOrNight = "黑夜"
 
     if interval == 0:
         if dayOrNight == "白天":
