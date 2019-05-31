@@ -5,6 +5,9 @@ import time, datetime
 
 win = Tk()
 num = 0
+interval = 0
+intervalDate = ""
+dayOrNight = ""
 global timeM, warnM
 def showUI():
     data = getURL.getRestMsg()
@@ -35,17 +38,39 @@ def warn():
     warnM.config(font=("Arial", 12))
     warnM.pack()
 
-# def readTimeJSON():
-#     global num
-#     num = num + 10
+
+def readTimeJSON():
+    # global num
+    # num = num + 10
+    global interval
+    global intervalDate
+    global dayOrNight
+    text = getURL.getRestMsg()
+    interval = int(text['cetus']['cetusTime']) - int(text['time'])
+    if text['cetus']['day'] == "True":
+        dayOrNight = "白天"
+    else:
+        dayOrNight = "黑夜"
+
+    if interval == 0:
+        if dayOrNight == "白天":
+            interval = 3600
+            dayOrNight = "黑夜"
+            intervalDate = datetime.datetime.fromtimestamp(interval)
+        else:
+            interval = 3600*2
+            dayOrNight = "白天"
+            intervalDate = datetime.datetime.fromtimestamp(interval)
+    else:
+        interval = interval-1
+        intervalDate = datetime.datetime.fromtimestamp(interval)
+    # intervalDate = datetime.datetime.fromtimestamp(interval)
 
 
 def refreshTime():
     global timeM
-    # readTimeJSON()
-    text = getURL.getRestMsg()
-    interval = int(text['cetus']['cetusTime']) - int(text['time'])
-    intervalDate = datetime.datetime.fromtimestamp(interval)
+    global intervalDate
+    readTimeJSON()
     # timeM["text"] = num
-    timeM["text"] = intervalDate.strftime("%Y-%m-%d %H:%M:%S")
+    timeM["text"] = intervalDate.strftime("%H:%M:%S")+dayOrNight
     win.after(1000, refreshTime)
