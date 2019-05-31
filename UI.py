@@ -12,15 +12,15 @@ intervalDate = ""
 #白天还是夜晚
 dayOrNight = ""
 #JSON数据
-global data
+global jsonText
 global timeM, warnM
-
+warnmsg = ""
 
 #UI展示主界面
 def showUI():
     global interval, dayOrNight
     win.title("迷你奥迪斯")
-    win.geometry("250x600")
+    win.geometry("300x400")
     win.resizable(width=False, height=True)
     #设置平原时间界面
     global timeM
@@ -29,9 +29,10 @@ def showUI():
     timeM = Label(win, text="初始化中...", font=("Arial", 12), width=20, height=2)
     timeM.pack(side=TOP)
     #设置警报界面
+    global warnM
     warnT = Label(win, text="警报", font=("Arial", 12), width=10, height=2)
     warnT.pack(side=TOP)
-    warnmsg = "内容   剩余时间\n反应堆   10：00\n催化剂  5：00\n无态晶   99：00"
+    warnmsg = "初始化中..."
     warnM = Message(win, text=warnmsg)
     warnM.config(font=("Arial", 12))
     warnM.pack()
@@ -80,27 +81,31 @@ def readTimeJSON():
 #刷新界面上时间显示
 def refreshTime():
     global timeM
+    global warnM
     global intervalDate
     global dayOrNight
     readTimeJSON()
+    readWarnJSON()
     # timeM["text"] = intervalDate.strftime("%H:%M:%S")+dayOrNight
     # timeM["text"] = str(intervalDate)+dayOrNight
     timeM["text"] = intervalDate+dayOrNight
+    warnM["text"] = warnmsg
     win.after(1000, refreshTime)
 
 #解析JSON，初始化数据
 def initJSON():
     global interval
     global dayOrNight
-    text = getURL.getRestMsg()
-    interval = int(text['cetus']['cetusTime']) - int(text['time'])
+    global jsonText
+    jsonText = getURL.getRestMsg()
+    interval = int(jsonText['cetus']['cetusTime']) - int(jsonText['time'])
     print("时间差值为")
     print(interval)
-    if text['cetus']['day'] == "True":
+    if jsonText['cetus']['day'] == "True":
         dayOrNight = "白天"
     else:
         dayOrNight = "夜晚"
-
+    readWarnJSON()
 
 def showHMS():
     global interval
@@ -108,3 +113,17 @@ def showHMS():
     m, s = divmod(interval, 60)
     h, m = divmod(m, 60)
     intervalDate = str(h)+":"+str(m)+":"+str(s)
+
+#处理时间数据
+def readWarnJSON():
+    global jsonText
+    global warnmsg
+    warnmsg = "内容   剩余时间\n"
+    for warnstr in jsonText['alerts']:
+        if len(warnstr['rewards']) != 0:
+            warnmsg = warnmsg + warnstr['rewards'][0]['item'] + "   " + str(warnstr['activation']) + "\n"
+            warnstr['activation'] = warnstr['activation'] - 1000
+        else :
+            warnmsg = warnmsg + "只有钱" + "   " + str(warnstr['activation']) + "\n"
+            warnstr['activation'] = warnstr['activation'] - 1000
+
